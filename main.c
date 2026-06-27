@@ -35,11 +35,6 @@ void main(){
   }
   
 
-
-  struct timespec tempo;
-  tempo.tv_sec = 0;
-  tempo.tv_nsec = (8*1000000);  // DEPOIS TROCA AQUI PELO SLICE
-
   //Joga todos os processos pra fila de alta de início
   //Depois a gente pensa na melhor forma de fazer essa leitura de processos
   for(int PPID = 1; PPID <= numero_processos; PPID++){ 
@@ -78,7 +73,7 @@ void main(){
     
     // DIMINUIR O TEMPO DE QUEM TÁ NO BLOQUEADO EM I/O
     
-    nanosleep(&tempo, NULL);
+
   }
 }
 
