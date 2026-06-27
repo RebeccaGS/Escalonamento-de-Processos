@@ -2,14 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "IO.c"
 #include "constants.h"
 #include "inicializar_processos.c"
-
+#include "prontos.c"
+#include "IO.c"
 
 PCB iniciaProcesso(int pid, int ppid);
 void enviaPraFila(PCB* processo, PCB** fila_alta);
 int testeInicialMalloc(void* array);
-PCB* escolheProximo(PCB** fila_alta, PCB** Fila_baixa);
 
 
 void main(){
@@ -34,6 +35,11 @@ void main(){
     enviaPraFila(&processo_novo,fila_alta);
   }
   
+
+
+  struct timespec tempo;
+  tempo.tv_sec = 0;
+  tempo.tv_nsec = (8*1000000);  // DEPOIS TROCA AQUI PELO SLICE
 
   //Joga todos os processos pra fila de alta de início
   //Depois a gente pensa na melhor forma de fazer essa leitura de processos
@@ -73,7 +79,7 @@ void main(){
     
     // DIMINUIR O TEMPO DE QUEM TÁ NO BLOQUEADO EM I/O
     
-
+    nanosleep(&tempo, NULL);
   }
 }
 
@@ -83,4 +89,13 @@ int testeInicialMalloc(void* array){
         printf("Erro de memoria!\n");
         return 1;
     }
+}
+
+
+PCB* escolheProximo(FilaProntos* A, FilaProntos* B) {
+  if (A->tamanho != 0) {
+    return pop(A);
+  } else {
+    return pop(B);
+  }
 }

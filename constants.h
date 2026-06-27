@@ -12,9 +12,9 @@ typedef enum{
 } Status;
 
 typedef enum {
-    DISCO, 
-    FITA, 
-    IMPRESSORA
+    DISCO = 5, 
+    FITA = 10, 
+    IMPRESSORA = 20
 } TipoIO;
 
 typedef struct {
@@ -38,3 +38,29 @@ typedef struct{ // pra saber qm ta na cpu e qnt tempo ta executando
   int tempo_executado;
 } Execucao;
 
+// parte das filas de IO e Prontos
+
+typedef struct {
+  PCB pcb;
+  ProcessoIO *proximo;
+  TipoIO tipo;
+  int espera;
+} ProcessoIO;
+
+typedef struct {
+  int tamanho;
+  ProcessoIO* inicio;
+  ProcessoIO* fim;
+} FilaIO;
+
+typedef struct {
+  PCB pcb;
+  ProcessoPronto *proximo;
+} ProcessoPronto;
+
+typedef struct {
+  int tamanho;
+  ProcessoIO* inicio;
+  ProcessoIO* fim;
+  Prioridade prioridade;
+} FilaProntos;
