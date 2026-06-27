@@ -1,62 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "constants.h"
+#include "inicializar_processos.c"
 
-typedef enum{
-  ALTA, BAIXA
-} Prioridade;
 
-typedef enum{
-  PRONTO, EXEC, BLOQUEADO
-}Status;
-
-typedef struct
-{
-  int PID;
-  int PPID;
-  Prioridade prioridade; 
-  Status status;
-  IO tipo_io;
-  int tempo_servico;
-}Processo;
-
-typedef struct{
-  Processo* processo_executando;
-  int tempo_executado;
-}Execucao;
-
-Processo iniciaProcesso(int pid, int ppid);
-
-void enviaPraFila(Processo* processo, Processo** fila_alta);
-
+PCB iniciaProcesso(int pid, int ppid);
+void enviaPraFila(PCB* processo, PCB** fila_alta);
 int testeInicialMalloc(void* array);
-
-Processo* escolheProximo(Processo** fila_alta, Processo** Fila_baixa);
-
+PCB* escolheProximo(PCB** fila_alta, PCB** Fila_baixa);
 
 
 void main(){
-    struct timespec tempo;
-    tempo.tv_sec = 0;
-    tempo.tv_nsec = (8*1000000);  // DEPOIS TROCA AQUI PELO SLICE
 
-    int numero_processos;
+  srand((unsigned)time(NULL)); // evita q rand() sorteie msm num sempre
 
-    printf("Digite quantos processos: \n");
-    scanf("%d", &numero_processos);
+  int numero_processos;
+  printf("Digite quantos processos: \n");
+  scanf("%d", &numero_processos);
+  if (numero_processos > MAX_PROCESSOS){
+    printf("Número pedido excedeu limite. Redefinido número de processos para valor máximo: = %d",MAX_PROCESSOS);
+    numero_processos = MAX_PROCESSOS;
+  }
 
-    Processo** fila_alta = malloc(numero_processos * sizeof(Processo));
-    testeInicialMalloc(fila_alta);
-    Processo** fila_baixa = malloc(numero_processos * sizeof(Processo));
-    testeInicialMalloc(fila_baixa);
+  PCB** fila_alta = malloc(numero_processos * sizeof(PCB*));
+  testeInicialMalloc(fila_alta);
+  PCB** fila_baixa = malloc(numero_processos * sizeof(PCB*));
+  testeInicialMalloc(fila_baixa);
 
-    //Joga todos os processos pra fila de alta de início
-    //Depois a gente pensa na melhor forma de fazer essa leitura de processos
-    for(int PPID = 1; PPID <= numero_processos; PPID++){ 
-      Processo processo = iniciaProcesso(PPID, 1);
-      enviaPraFila(&processo, fila_alta);
-    }
+  for (int i = 100; i < numero_processos+100; i++){ // fiz o pid começar em 100 pra evitar pids reservados p/ o kerbel
+    PCB processo_novo = iniciaProcesso(i,1); // defini todos como filhos do processo raiz (ppid = 1)
+    enviaPraFila(&processo_novo,fila_alta);
+  }
+  
+
+
+  struct timespec tempo;
+  tempo.tv_sec = 0;
+  tempo.tv_nsec = (8*1000000);  // DEPOIS TROCA AQUI PELO SLICE
+
+  //Joga todos os processos pra fila de alta de início
+  //Depois a gente pensa na melhor forma de fazer essa leitura de processos
+  for(int PPID = 1; PPID <= numero_processos; PPID++){ 
+    PCB processo = iniciaProcesso(PPID, 1);
+    enviaPraFila(&processo, fila_alta);
+  }
 
     Execucao execucao;
   while(1){
