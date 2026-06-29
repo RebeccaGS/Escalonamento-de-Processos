@@ -19,7 +19,7 @@ void bloqueioIO(FilaIO filas[3], PCB* pcb, TipoIO tipo) {
     novo->espera = tipo;
     free(pcb);
 
-    FilaIO* F; // escolhe para qual das filas vai adicionar o processo baseado no tipo
+    FilaIO* F = NULL; // escolhe para qual das filas vai adicionar o processo baseado no tipo
     switch (tipo)
         {
         case DISCO:

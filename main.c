@@ -54,7 +54,7 @@ void main(void){
     }
 
     // Testa Quantum
-    if(fatia > QUANTUM) {
+    if(fatia == QUANTUM) {
         novoPronto(fila_baixa, emCPU);
         fatia = 0;
         continue;
