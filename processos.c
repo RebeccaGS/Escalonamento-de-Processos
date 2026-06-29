@@ -54,9 +54,9 @@ void lerLista(FilaProcessos* fila) {
     int indice = 1; // começa a ler da segunda linha, pq na primeira tem instruções
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        PCB pcb = *inicializaProcesso(indice);
+        PCB *pcb = inicializaProcesso(indice);
 
-        sscanf(linha, "%d %d", &pcb.instante_chegada, &pcb.tempo_servico);
+        sscanf(linha, "%d %d", pcb->instante_chegada, pcb->tempo_servico);
             novoProcesso(fila, &pcb);
     }
     fclose(arquivo);
