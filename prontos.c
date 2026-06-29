@@ -18,6 +18,7 @@ void novoPronto(FilaProntos* F, PCB* pcb) {
 
     novo->pcb = *pcb;
     novo->proximo = NULL;
+    free(pcb);
 
     if (F->tamanho == NULL) { // se a fila estiver vazia, coloca na frente e no final, se não, coloca no final.
         F->fim = novo;
@@ -33,4 +34,12 @@ PCB* pop(FilaProntos* F) {
     PCB *primeiro = F->inicio;
     F->inicio = F->inicio->proximo; //TODO: ver sobre memory leak aqui
     return primeiro;
+}
+
+PCB* escolheProximo(FilaProntos* A, FilaProntos* B) {
+  if (A->tamanho != 0) {
+    return pop(A);
+  } else {
+    return pop(B);
+  }
 }

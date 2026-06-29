@@ -8,15 +8,32 @@ void inicializaFilaIO(FilaIO* F) {
     F->tamanho = 0;
 }
 
-// recebe uma fila, um processo, e um tipo de bloqueio, 
+// recebe a lista de filas, um processo, e um tipo de bloqueio, 
 // e adiciona esse processo na fila de bloqueados para aquele dispositivo
-void bloqueioIO(FilaIO* F, PCB* pcb, TipoIO tipo) {
+void bloqueioIO(FilaIO filas[3], PCB* pcb, TipoIO tipo) {
     pcb->status = BLOQUEADO;
 
     ProcessoIO *novo = malloc(sizeof(ProcessoIO)); // cria e inicializa o processo na fila
     novo->pcb = *pcb;
     novo->proximo = NULL;
     novo->espera = tipo;
+    free(pcb);
+
+    FilaIO* F; // escolhe para qual das filas vai adicionar o processo baseado no tipo
+    switch (tipo)
+        {
+        case DISCO:
+        FilaIO* F = &filas[0];
+        break;
+        case FITA:
+        FilaIO* F = &filas[1];
+        break;
+        case IMPRESSORA:
+        FilaIO* F = &filas[2];
+        break;
+    default:
+        break;
+    }
 
     if (F->tamanho == 0) { // se a fila estiver vazia, coloca na frente e no final, se não, coloca no final.
         F->fim = novo;
@@ -29,27 +46,20 @@ void bloqueioIO(FilaIO* F, PCB* pcb, TipoIO tipo) {
 }
 
 
-// verifica se o tempo de IO acabou, se acabou, muda o primeiro processo pra fila de prontos
-void gerenciaFilaIO(FilaIO* IO, FilaProntos* fila_alta, FilaProntos* fila_baixa) {
-    if( IO-> inicio == NULL) return;
+// verifica se o tempo de IO acabou em uma das 3 filas, se sim, envia o processo para a fila de prontos respectiva.
+void gerenciaFilaIO(FilaIO IO[3], FilaProntos* fila_alta, FilaProntos* fila_baixa) {
+    
+    for (int i = 0; i<3; i++) {
+        if( IO[i].inicio == NULL) continue;
 
-    ProcessoIO* ocupando_atual = IO ->inicio;
-    ocupando_atual->espera--;
-
-    if(ocupando_atual->espera <= 0){
-        //TODO: VER SE VAI QUERER PRINTF
-        
-        if(ocupando_atual->tipo == DISCO){
-            novoPronto(fila_baixa, &(ocupando_atual->pcb));
-        } else {
-            novoPronto(fila_alta, &(ocupando_atual->pcb));
+        IO[i].inicio->espera--;
+        if (IO[i].inicio->espera == 0) {
+            ProcessoIO* primeiro = IO[i].inicio;
+            primeiro->tipo == DISCO ? novoPronto(fila_baixa, primeiro) : novoPronto(fila_alta, primeiro);
+            IO[i].inicio->proximo = IO[i].inicio;
+            if (IO[i].inicio == NULL) IO[i].fim = NULL; 
+            free(primeiro);
+            IO[i].tamanho--;
         }
-
-        IO->inicio = ocupando_atual->proximo;
-        if (IO->inicio == NULL) IO->fim = NULL;
-
-        free(ocupando_atual);
-        IO->tamanho--;
     }
-
 }

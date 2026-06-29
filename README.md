@@ -1,6 +1,37 @@
 # Escalonamento-de-Processos
 
 
+Processo X:
+
+tempo de serviço 9
+quant io 1
+tempo io 3, disco
+
+O processo x está na fila de prontos, no instante 0 ele entra em CPU:
+
+o tempo em CPU é incrementado em 1: 1
+
+fim do instante 0
+instante 1
+
+o tempo de CPU é incrementado em 1: 2
+
+fim do instante 1
+instante 2
+
+CPU ++: 3
+
+Opa! IO
+bloqueio para IO
+
+instante 8 (passou 5 em disco)
+
+CPU ++: 4
+
+Opa! Acabou o quantum
+vai pra fila de baixa prioridade
+
+
 ## rascunho do luz sobre a modelagem do programa
 
 Tabelas com os processos, armazenada em um arquivo.
