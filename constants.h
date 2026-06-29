@@ -30,6 +30,8 @@ typedef struct {
   Status status;
   int tempo_servico;
   int quant_IO;
+  int instante_chegada;
+  int tempo_na_cpu; // pra poder bater com os tempos de IO e tbm pra fazer a tabela dps
   OperacaoIO lista_ios[MAX_IO_POR_PROCESSO]; // lembrar de definir limites de ios pra nao dar ruim - ver com luz
 } PCB;
 

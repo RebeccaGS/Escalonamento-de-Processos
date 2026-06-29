@@ -2,7 +2,7 @@
 #include "constants.h"
 #include "prontos.c"
 
-void inicializaFila(FilaIO* F) {
+void inicializaFilaIO(FilaIO* F) {
     F->fim = NULL;
     F->inicio = NULL;
     F->tamanho = 0;
@@ -13,7 +13,7 @@ void inicializaFila(FilaIO* F) {
 void bloqueioIO(FilaIO* F, PCB* pcb, TipoIO tipo) {
     pcb->status = BLOQUEADO;
 
-    ProcessoIO *novo; // cria e inicializa o processo na fila
+    ProcessoIO *novo = malloc(sizeof(ProcessoIO)); // cria e inicializa o processo na fila
     novo->pcb = *pcb;
     novo->proximo = NULL;
     novo->espera = tipo;
@@ -30,12 +30,26 @@ void bloqueioIO(FilaIO* F, PCB* pcb, TipoIO tipo) {
 
 
 // verifica se o tempo de IO acabou, se acabou, muda o primeiro processo pra fila de prontos
-void fimIO(FilaIO* IO, FilaProntos* Prontos) {
-    IO->inicio->espera--; // decrementa o contador do primeiro da fila
+void gerenciaFilaIO(FilaIO* IO, FilaProntos* fila_alta, FilaProntos* fila_baixa) {
+    if( IO-> inicio == NULL) return;
 
-    if (IO->inicio->espera == 0) {
-        PCB *primeiro = IO->inicio;
-        IO->inicio->proximo = IO->inicio;
-        novoPronto(Prontos, primeiro);
+    ProcessoIO* ocupando_atual = IO ->inicio;
+    ocupando_atual->espera--;
+
+    if(ocupando_atual->espera <= 0){
+        //TODO: VER SE VAI QUERER PRINTF
+        
+        if(ocupando_atual->tipo == DISCO){
+            novoPronto(fila_baixa, &(ocupando_atual->pcb));
+        } else {
+            novoPronto(fila_alta, &(ocupando_atual->pcb));
+        }
+
+        IO->inicio = ocupando_atual->proximo;
+        if (IO->inicio == NULL) IO->fim = NULL;
+
+        free(ocupando_atual);
+        IO->tamanho--;
     }
+
 }
