@@ -2,7 +2,7 @@
 #include "constants.h"
 
 // inicializa uma fila de uma prioridade alta ou baixa.
-void inicializaFila(FilaProntos* F, Prioridade P) {
+void inicializaFilaPronto(FilaProntos* F, Prioridade P) {
     F->fim = NULL;
     F->inicio = NULL;
     F->prioridade = P;
@@ -14,7 +14,8 @@ void novoPronto(FilaProntos* F, PCB* pcb) {
     pcb->status = PRONTO;
     pcb->prioridade = F->prioridade;
 
-    ProcessoPronto *novo; // cria e inicializa o processo na fila
+    ProcessoPronto *novo = malloc(sizeof(ProcessoPronto)); // cria e inicializa o processo na fila
+
     novo->pcb = *pcb;
     novo->proximo = NULL;
 
@@ -30,6 +31,6 @@ void novoPronto(FilaProntos* F, PCB* pcb) {
 
 PCB* pop(FilaProntos* F) {
     PCB *primeiro = F->inicio;
-    F->inicio->proximo = F->inicio;
+    F->inicio = F->inicio->proximo; //TODO: ver sobre memory leak aqui
     return primeiro;
 }
