@@ -1,1 +1,14 @@
-# hora que o trem aparece / tempo de serviço
+# instante_chegada tempo_servico qtd_ios tipo1 momento1 tipo2 momento2 ...
+13
+0 2 1 5 1
+1 4 2 10 2 20 3
+2 7 1 5 4
+4 5 0
+5 2 1 5 1
+8 4 2 10 2 20 3
+11 7 1 5 4
+15 5 0
+16 7 1 5 4
+17 5 0
+18 2 1 5 1
+20 4 2 10 2 20 3

@@ -1,7 +1,14 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define TEMPO_MAX 100 
 #define QUANTUM 4
 #define MAX_IO_POR_PROCESSO 5
-#define MAX_PROCESSOS 20
+#define MAX_PROCESSOS 30
 #define PATH "tabela.txt"
+#define IO_DISCO 5
+#define IO_FITA 10
+#define IO_IMPRESSORA 20
 
 typedef enum{
   ALTA, BAIXA
@@ -12,9 +19,9 @@ typedef enum{
 } Status;
 
 typedef enum {
-    DISCO = 5, 
-    FITA = 10, 
-    IMPRESSORA = 20
+    DISCO = 3, 
+    FITA = 6, 
+    IMPRESSORA = 9
 } TipoIO;
 
 typedef struct {
@@ -38,7 +45,7 @@ typedef struct {
 
 typedef struct ProcessoIO{
   PCB pcb;
-  ProcessoIO *proximo;
+  struct ProcessoIO *proximo;
   TipoIO tipo;
   int espera;
 } ProcessoIO;
@@ -51,19 +58,19 @@ typedef struct {
 
 typedef struct ProcessoPronto{
   PCB pcb;
-  ProcessoPronto *proximo;
+  struct ProcessoPronto *proximo;
 } ProcessoPronto;
 
 typedef struct {
   int tamanho;
-  ProcessoIO* inicio;
-  ProcessoIO* fim;
+  ProcessoPronto* inicio;
+  ProcessoPronto* fim;
   Prioridade prioridade;
 } FilaProntos;
 
 typedef struct Processo {
   PCB pcb;
-  Processo* proximo;
+  struct Processo* proximo;
 } Processo;
 
 typedef struct {
@@ -71,3 +78,5 @@ typedef struct {
   Processo* inicio;
   Processo* fim;
 } FilaProcessos;
+
+#endif // CONSTANTS_H
