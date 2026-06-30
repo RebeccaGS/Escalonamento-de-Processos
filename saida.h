@@ -3,7 +3,7 @@
 
 #include "constants.h"
 
-void imprimirMatriz(int execucao[], int tempo_total, int pids[], int qtd_processos);
+void imprimirMatriz(int execucao[], int tempo_total, int pids[], int qtd_processos,FilaProcessos *fila_saida);
 // Funções de saída e relatório do escalonador
 // (a serem implementadas)
 

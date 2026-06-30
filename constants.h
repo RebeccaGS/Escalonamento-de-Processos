@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 #define TEMPO_MAX 100 
-#define QUANTUM 4
+#define QUANTUM 3
 #define MAX_IO_POR_PROCESSO 5
 #define MAX_PROCESSOS 30
 #define PATH "tabela.txt"

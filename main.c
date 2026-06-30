@@ -139,5 +139,5 @@ int main(void){
         tempo_global++;
     }
 
-    imprimirMatriz(execucao, tempo_global, pids, total_processos);
+    imprimirMatriz(execucao, tempo_global, pids, total_processos, &fila_saida);
 }
