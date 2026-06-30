@@ -39,20 +39,29 @@ int main(void){
     int pids[MAX_PROCESSOS]; // pra saber quais PIDs tem q printar na tabela
     int pids_unicos = 0;
     // Ciclo principal
-    while (1) {
-
-        // Chegada de novos processos no instante atual
+    // 1. Chegada de novos processos no instante atual
+        
+    while(1){
         while (fila_entrada.inicio != NULL &&
                 fila_entrada.inicio->pcb.instante_chegada == tempo_global) {
             PCB *proc = popProcesso(&fila_entrada);
             if (proc != NULL) {
-                int pid = proc->PID;      // captura o PID de quem chegou
-                novoPronto(fila_alta, proc); // proc é liberado aqui dentro
-                pids[pids_unicos++] = pid;   // usa a cópia segura
+                int pid = proc->PID;      
+                novoPronto(fila_alta, proc); 
+                pids[pids_unicos++] = pid;   
             }
         }
 
-        // Verifica se a simulação terminou
+        // 2. CORREÇÃO: Verificação de preempção do ciclo anterior
+        // Retira o processo da CPU antes de escalonar o instante atual
+        if (emCPU != NULL && fatia >= QUANTUM) {
+            emCPU->status = PRONTO;
+            novoPronto(fila_baixa, emCPU);
+            emCPU = NULL;
+            fatia = 0;
+        }
+
+        // 3. Verifica se a simulação terminou
         if (fila_saida.tamanho == total_processos &&
             emCPU == NULL &&
             fila_alta->tamanho == 0 &&
@@ -61,50 +70,30 @@ int main(void){
             break;
         }
 
-        // Escolhe o próximo processo
+        // 4. Escolhe o próximo processo
         if (emCPU == NULL) {
             if (fila_alta->tamanho > 0 || fila_baixa->tamanho > 0) {
                 emCPU = escolheProximo(fila_alta, fila_baixa);
                 fatia = 0;
-            } else {
-                // Não há processo pronto: só atualiza IO e avança o tempo
-                gerenciaFilaIO(filas, fila_alta, fila_baixa);
-                tempo_global++;
-                continue;
-            }
+            } 
         }
 
-        // carrega quem tá na cpu quando pra montar a tabela de execução
+        // 5. Grava quem tá na cpu ou avança se ocioso
         if (emCPU != NULL) {
             execucao[tempo_global] = emCPU->PID;
         } else {
             execucao[tempo_global] = -1; // CPU ociosa
-        }
-
-        // Segurança para evitar usar CPU quando não há processo
-        if (emCPU == NULL) {
             gerenciaFilaIO(filas, fila_alta, fila_baixa);
             tempo_global++;
             continue;
         }
 
-        //  Preempção por quantum
-        if (fatia >= QUANTUM) {
-            emCPU->status = PRONTO;
-            novoPronto(fila_baixa, emCPU);
-            emCPU = NULL;
-            fatia = 0;
-            gerenciaFilaIO(filas, fila_alta, fila_baixa);
-            tempo_global++;
-            continue;
-        }
-
-        // Execução de uma unidade de tempo do processo atual
+        // 6. Execução real de uma unidade de tempo
         emCPU->status = EXEC;
         fatia++;
         emCPU->tempo_na_cpu++;
 
-        // Verifica término do processo + debug
+        // 7. Verifica término do processo
         if (emCPU->tempo_na_cpu >= emCPU->tempo_servico) {
             emCPU->status = FINALIZADO;
             emCPU->instante_saida = tempo_global + 1;
@@ -128,16 +117,9 @@ int main(void){
             }
         }
 
-        if (emCPU == NULL) {
-            gerenciaFilaIO(filas, fila_alta, fila_baixa);
-            tempo_global++;
-            continue;
-        }
-
-        // Atualiza filas de IO e avança o tempo global
+        // 8. Atualiza filas de IO e avança o tempo global
         gerenciaFilaIO(filas, fila_alta, fila_baixa);
         tempo_global++;
-    }
-
     imprimirMatriz(execucao, tempo_global, pids, total_processos, &fila_saida);
+    }
 }
