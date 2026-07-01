@@ -71,7 +71,7 @@ void lerLista(FilaProcessos* fila) {
 
     char linha[128];
     int num_processos = 0;
-    int indice = 1;
+    int indice = 100;
 
     // Pula primeira linha (cabeçalho)
     if (fgets(linha, sizeof(linha), arquivo) == NULL) {
