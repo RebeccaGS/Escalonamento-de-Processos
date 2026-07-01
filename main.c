@@ -120,6 +120,6 @@ int main(void){
         // 8. Atualiza filas de IO e avança o tempo global
         gerenciaFilaIO(filas, fila_alta, fila_baixa);
         tempo_global++;
-    imprimirMatriz(execucao, tempo_global, pids, total_processos, &fila_saida);
     }
+    imprimirMatriz(execucao, tempo_global, pids, total_processos, &fila_saida);
 }
