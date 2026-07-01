@@ -2,7 +2,7 @@
 #include "constants.h"
 
 void imprimirMatriz(int execucao[], int tempo_total, int pids[],int qtd_processos,FilaProcessos *fila_saida) {
-    // tabela 1 q mostra fluxo da cpu a cada u.t.
+    // tabela 1 que mostra fluxo da cpu a cada u.t.
     printf("CPU a longo do tempo:\n\n");
     printf("%-5s", "PID");
     for (int t = 0; t < tempo_total; t++) {
@@ -13,7 +13,7 @@ void imprimirMatriz(int execucao[], int tempo_total, int pids[],int qtd_processo
     
     for (int i = 0; i < qtd_processos; i++) {
         int pid_atual = pids[i];
-        printf("%-5d", pid_atual);
+        printf("%-5d", pid_atual+100);
 
         for (int t = 0; t < tempo_total; t++) {
             char marcador = (execucao[t] == pid_atual) ? 'X' : '.';
@@ -31,6 +31,7 @@ void imprimirMatriz(int execucao[], int tempo_total, int pids[],int qtd_processo
     }
     printf("\n");
 
+    // tabela 2 que mostra os dados
     printf("\nResumo da execucao:\n\n");
     Processo *p = fila_saida->inicio;
 
@@ -41,7 +42,7 @@ void imprimirMatriz(int execucao[], int tempo_total, int pids[],int qtd_processo
 
     while (p != NULL) {
         int turnaround = p->pcb.instante_saida - p->pcb.instante_chegada;
-        printf("PID %2d | Entrada: %2d | Saida: %2d | Turnaround: %2d\n",p->pcb.PID,p->pcb.instante_chegada,p->pcb.instante_saida,turnaround);
+        printf("PID %2d | Entrada: %2d | Saida: %2d | Turnaround: %2d\n",p->pcb.PID+100,p->pcb.instante_chegada,p->pcb.instante_saida,turnaround);
         p = p->proximo;
     }
 

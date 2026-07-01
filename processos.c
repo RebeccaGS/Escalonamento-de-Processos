@@ -56,7 +56,6 @@ void novoProcesso(FilaProcessos *fila, PCB* pcb) {
     free(pcb);
 }
 
-// BY MEGABRAIN COM AJUDA DO COPY CHIEF
 // lê a tabela.txt e carrega os valores numa fila de processos
 // Primeira linha: ignorada (cabeçalho)
 // Segunda linha: quantidade de processos

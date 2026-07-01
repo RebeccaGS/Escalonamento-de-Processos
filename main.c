@@ -52,7 +52,6 @@ int main(void){
             }
         }
 
-        // 2. CORREÇÃO: Verificação de preempção do ciclo anterior
         // Retira o processo da CPU antes de escalonar o instante atual
         if (emCPU != NULL && fatia >= QUANTUM) {
             emCPU->status = PRONTO;
